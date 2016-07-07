@@ -42,7 +42,7 @@ export default Component.extend({
   optionsChanged: observer('options', function() {
     let options = this.get('options');
 
-    if (isEmpty(options)) {
+    if (Ember.isEmpty(options)) {
       // TODO: unset options which were removed
       return;
     }
