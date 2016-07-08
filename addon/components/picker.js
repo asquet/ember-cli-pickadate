@@ -53,7 +53,8 @@ export default Component.extend({
     
     if (!Ember.isEmpty(settableKeys)) {
       let settableData = settableKeys.reduce( (res, key) => {
-        result[key] = options[key] || null;
+        res[key] = options[key] || null;
+        return res;
       }, {});
       
       picker.set(settableData); //causes rerender
