@@ -40,17 +40,28 @@ export default Component.extend({
   }),
 
   optionsChanged: observer('options', function() {
-    let options = this.get('options');
-
-    if (Ember.isEmpty(options)) {
-      // TODO: unset options which were removed
-      return;
+    let options = this.get('options'),
+        picker = this.get('picker');
+    
+    if (options.settings) {
+      picker.component.settings = options.settings;
+      picker.render(true);
     }
-
-    for (var key in options) {
-      if (options.hasOwnProperty(key)) {
-        this.get('picker').set(key, options[key]);
-      }
+    
+    //pick-a-date actually "sets" only options present as fields in this `component.item`
+    var settableKeys = Object.keys(picker.component.item); 
+    
+    if (!Ember.isEmpty(settableKeys)) {
+      let settableData = settableKeys.reduce( res, key => {
+        result[key] = options[key] || null;
+      }, {});
+      
+      picker.set(settableData); //causes rerender
+    }
+    
+    let unusedKeys = Object.keys(options).filter(key => key !== 'settings').filter(key => !settableKeys.contains(key));
+    if (!Ember.isEmpty(unusedKeys)) {
+      console.warn('Trying to set unknown options for pick-a-date: ' + unusedKeys.join(', '));
     }
   }),
 
