@@ -44,7 +44,7 @@ export default Component.extend({
         picker = this.get('picker');
     
     if (options.settings) {
-      picker.component.settings = options.settings;
+      Ember.merge(picker.component.settings, options.settings);
       picker.render(true);
     }
     
