@@ -52,7 +52,7 @@ export default Component.extend({
     var settableKeys = Object.keys(picker.component.item); 
     
     if (!Ember.isEmpty(settableKeys)) {
-      let settableData = settableKeys.reduce( res, key => {
+      let settableData = settableKeys.reduce( (res, key) => {
         result[key] = options[key] || null;
       }, {});
       
