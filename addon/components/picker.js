@@ -51,14 +51,16 @@ export default Component.extend({
     //pick-a-date actually "sets" only options present as fields in this `component.item`
     var settableKeys = Object.keys(picker.component.item); 
     
-    if (!Ember.isEmpty(settableKeys)) {
-      let settableData = settableKeys.reduce( (res, key) => {
-        res[key] = options[key] || null;
-        return res;
-      }, {});
-      
+    let settableData = settableKeys.reduce( (res, key) => {
+      if (!Ember.isNone(options[key])) {
+        res[key] = options[key];
+      }
+      return res;
+    }, {});
+    if (!Ember.isEmpty(Object.keys(settableData))) {
       picker.set(settableData); //causes rerender
     }
+    
     
     let unusedKeys = Object.keys(options).filter(key => key !== 'settings').filter(key => !settableKeys.contains(key));
     if (!Ember.isEmpty(unusedKeys)) {
