@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import Picker from './picker';
+import $ from 'jquery';
 
 const {
   Component,
@@ -37,11 +38,17 @@ export default Picker.extend({
     this.set('picker', this.$().pickadate('picker'));
     
     if (options.editable === true) {
-	    this.$().focus(event => {
-	      this.get('picker').open();
-	      event.preventDefault();
-	    });
+	    this.$().on('focus', () => this.get('picker').open(false));
+	    $(document).on('click', this._hidePicker.bind(this));
     }
+  },
+  _hidePicker() {
+    this.get('picker').close();
+  },
+  
+  willDestroyElement() {
+    this.$().off('focus');
+    $(document).off('click', this._hidePicker.bind(this));
   },
 
   updateInputText() {
