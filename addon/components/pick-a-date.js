@@ -38,17 +38,31 @@ export default Picker.extend({
     this.set('picker', this.$().pickadate('picker'));
     
     if (options.editable === true) {
-	    this.$().on('focus', () => this.get('picker').open(false));
-	    $(document).on('click', this._hidePicker.bind(this));
+      this.$().on('focus', () => {
+        picker.open(false);
+      });
+      this.$().on('click', (ev) => {
+        ev.stopPropagation();
+      });
+      this._hidePicker = function() {
+        picker.close();
+        if (this.$().val().trim().length === 0) {
+          picker.clear();
+        }
+      }.bind(this);
+      $(document).on('click', this._hidePicker);
+
+      picker.on('close', () => {
+        if (this.$().val().trim().length === 0) {
+          picker.clear();
+        }
+      });
     }
   },
-  _hidePicker() {
-    this.get('picker').close();
-  },
-  
+ 
   willDestroyElement() {
     this.$().off('focus');
-    $(document).off('click', this._hidePicker.bind(this));
+    $(document).off('click', this._hidePicker);
   },
 
   updateInputText() {
