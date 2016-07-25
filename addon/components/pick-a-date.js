@@ -37,7 +37,10 @@ export default Picker.extend({
     this.set('picker', this.$().pickadate('picker'));
     
     if (options.editable === true) {
-	    this.$().focus(() => this.get('picker').open());
+	    this.$().focus(event => {
+	      this.get('picker').open();
+	      event.preventDefault();
+	    });
     }
   },
 
