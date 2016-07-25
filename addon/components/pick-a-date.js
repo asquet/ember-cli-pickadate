@@ -35,7 +35,8 @@ export default Picker.extend({
     }
 
     this.$().pickadate(options);
-    this.set('picker', this.$().pickadate('picker'));
+    let picker = this.$().pickadate('picker')
+    this.set('picker', picker);
     
     if (options.editable === true) {
       this.$().on('focus', () => {
