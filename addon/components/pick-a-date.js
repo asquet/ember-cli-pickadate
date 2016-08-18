@@ -37,7 +37,7 @@ export default Picker.extend({
     this.$().pickadate(options);
     let picker = this.$().pickadate('picker')
     this.set('picker', picker);
-    
+
     if (options.editable === true) {
       this.$().on('focus', () => {
         picker.open(false);
@@ -47,24 +47,39 @@ export default Picker.extend({
       });
       this.$().on('blur', (ev) => {
         const text = this.$().val().trim();
+
+        if (!text) return true;
+
         const format = options.format || DEFAULT_DATE_FORMAT;
         const picker = this.get('picker');
+
+        function formatter(parseObject){return picker.component.formats.toString.call(picker.component, format, parseObject)}
+
+        if (picker.get('select') && formatter(picker.get('select')) === text) return true;
+
         let parseArray = picker.component.parse('select', text),
           parseObject = {
-            year: parseArray[0],
-            month: parseArray[1],
-            date: parseArray[2]
+            year: Number(parseArray[0]),
+            month: Number(parseArray[1]),
+            date: Number(parseArray[2])
           };
 
-        if (picker.component.formats.toString.call(picker.component, format, parseObject) === text) {
+        if (formatter(parseObject) === text) {
           picker.set('select', text, {
             format: format,
             muted: true
           });
+          this.attrs['on-selected'](picker.get('select').obj, ev);
         } else {
           picker.set('select', picker.get('select'));
         }
         this._hidePicker();
+      });
+      this.$().on('keydown', (ev) => {
+         if (ev.which === 13) {
+             this.$().blur();
+             ev.preventDefault();
+         }
       });
       this._hidePicker = function() {
         picker.close();
@@ -81,7 +96,7 @@ export default Picker.extend({
       });
     }
   },
- 
+
   willDestroyElement() {
     this.$().off('focus');
     this.$().off('blur');
