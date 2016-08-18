@@ -45,6 +45,27 @@ export default Picker.extend({
       this.$().on('click', (ev) => {
         ev.stopPropagation();
       });
+      this.$().on('blur', (ev) => {
+        const text = this.$().val().trim();
+        const format = options.format || DEFAULT_DATE_FORMAT;
+        const picker = this.get('picker');
+        let parseArray = picker.component.parse('select', text),
+          parseObject = {
+            year: parseArray[0],
+            month: parseArray[1],
+            date: parseArray[2]
+          };
+
+        if (picker.component.formats.toString.call(picker.component, format, parseObject) === text) {
+          picker.set('select', text, {
+            format: format,
+            muted: true
+          });
+        } else {
+          picker.set('select', picker.get('select'));
+        }
+        this._hidePicker();
+      });
       this._hidePicker = function() {
         picker.close();
         if (this.$().val().trim().length === 0) {
@@ -63,6 +84,8 @@ export default Picker.extend({
  
   willDestroyElement() {
     this.$().off('focus');
+    this.$().off('blur');
+    this.$().off('click');
     $(document).off('click', this._hidePicker);
   },
 
